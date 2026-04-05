@@ -5,6 +5,12 @@
  * This file only keeps structural rules that don't depend on user colors.
  */
 
+/* Today ring */
+.calendar-today {
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 999px !important;
+}
+
 /* Preserve the today ring when today is also a holiday or weekend */
 .calendar-day-holiday.calendar-today,
 .calendar-day-weekend.calendar-today {
@@ -178,6 +184,10 @@
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-day.calendar-today {
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
 }
 
 .datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-day:hover {

@@ -143,6 +143,7 @@ class NotificationMenuButton extends PanelMenu.Button {
 
         this._headerBadge = new St.Label({
             style_class: 'calendar-colors-notification-header-badge',
+            y_align: Clutter.ActorAlign.CENTER,
             visible: false,
         });
         header.add_child(this._headerBadge);
@@ -525,7 +526,7 @@ export default class CalendarColorsExtension extends Extension {
         }
         case 'holiday': {
             const color = this._settings.get_string('holiday-color');
-            return `background-color: ${color}; border-radius: 9999px;`;
+            return `color: ${color};`;
         }
         case 'event': {
             const color = this._settings.get_string('event-color');
@@ -600,6 +601,7 @@ export default class CalendarColorsExtension extends Extension {
             Main.panel.statusArea[NOTIFICATION_BUTTON_ROLE] = this._notificationButton;
             this._notificationButtonContainer
                 .add_style_class_name(SPLIT_NOTIFICATION_CONTAINER_STYLE_CLASS);
+            Main.panel.menuManager?.addMenu(this._notificationButton.menu);
         } catch (error) {
             delete Main.panel.statusArea[NOTIFICATION_BUTTON_ROLE];
             this._notificationButtonContainer?.get_parent?.()
@@ -628,6 +630,7 @@ export default class CalendarColorsExtension extends Extension {
         this._restoreDateMenuIndicator();
 
         if (this._notificationButton) {
+            Main.panel.menuManager?.removeMenu(this._notificationButton.menu);
             delete Main.panel.statusArea[NOTIFICATION_BUTTON_ROLE];
             this._notificationButton.remove_style_class_name(
                 SPLIT_NOTIFICATION_BUTTON_STYLE_CLASS);

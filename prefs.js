@@ -97,7 +97,7 @@ export default class CalendarColorsPreferences extends ExtensionPreferences {
 
         this._addColorRow(colorsGroup, settings,
             _('Holiday Color'),
-            _('Background applied to dates in the holiday list.'),
+            _('Text color applied to dates in the holiday list.'),
             'holiday-color');
 
         this._addColorRow(colorsGroup, settings,
