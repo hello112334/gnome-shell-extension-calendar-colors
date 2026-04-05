@@ -1,3 +1,4 @@
+import Clutter from 'gi://Clutter';
 import Gio from 'gi://Gio';
 import GObject from 'gi://GObject';
 import St from 'gi://St';
@@ -9,6 +10,7 @@ import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
 const NOTIFICATIONS_SCHEMA = 'org.gnome.desktop.notifications';
 const NOTIFICATION_BUTTON_ROLE = 'calendar-colors-notifications';
 const SPLIT_MESSAGE_LIST_STYLE_CLASS = 'calendar-colors-split-message-list';
+const SPLIT_DATEMENU_POPOVER_STYLE_CLASS = 'calendar-colors-split-datemenu-popover';
 const SPLIT_DATE_BUTTON_STYLE_CLASS = 'calendar-colors-split-date-button';
 const SPLIT_NOTIFICATION_BUTTON_STYLE_CLASS = 'calendar-colors-split-notification-button';
 const SPLIT_DATE_CONTAINER_STYLE_CLASS = 'calendar-colors-split-date-container';
@@ -100,6 +102,7 @@ class NotificationMenuButton extends PanelMenu.Button {
         super._init(0.5, 'Notifications');
 
         this.add_style_class_name('calendar-colors-notification-button');
+        this._bannerSettings = new Gio.Settings({schema_id: NOTIFICATIONS_SCHEMA});
 
         this._icon = new NotificationHeaderIcon();
         this.add_child(this._icon);
@@ -115,6 +118,35 @@ class NotificationMenuButton extends PanelMenu.Button {
             style_class: 'calendar-colors-notification-menu',
         });
         this.menu.box.add_child(this._contentBox);
+
+        const header = new St.BoxLayout({
+            x_expand: true,
+            style_class: 'calendar-colors-notification-header',
+        });
+
+        const headerCopy = new St.BoxLayout({
+            vertical: true,
+            x_expand: true,
+            style_class: 'calendar-colors-notification-header-copy',
+        });
+        headerCopy.add_child(new St.Label({
+            text: 'NOTIFICATIONS',
+            x_expand: true,
+            style_class: 'calendar-colors-notification-header-label',
+        }));
+        this._headerMeta = new St.Label({
+            x_expand: true,
+            style_class: 'calendar-colors-notification-header-meta',
+        });
+        headerCopy.add_child(this._headerMeta);
+        header.add_child(headerCopy);
+
+        this._headerBadge = new St.Label({
+            style_class: 'calendar-colors-notification-header-badge',
+            visible: false,
+        });
+        header.add_child(this._headerBadge);
+        this._contentBox.add_child(header);
 
         this._scrollView = new St.ScrollView({
             x_expand: true,
@@ -140,6 +172,9 @@ class NotificationMenuButton extends PanelMenu.Button {
             'source-removed', (_tray, source) => this._onSourceRemoved(source),
             'queue-changed', () => this._syncNotifications(),
             this);
+        this._bannerSettings.connectObject(
+            'changed::show-banners', () => this._syncNotifications(),
+            this);
         this.menu.connectObject(
             'open-state-changed', () => this._syncNotifications(),
             this);
@@ -147,8 +182,25 @@ class NotificationMenuButton extends PanelMenu.Button {
         for (const source of Main.messageTray.getSources())
             this._onSourceAdded(source);
 
+        // Close the popup when clicking outside it (e.g. desktop wallpaper).
+        this._stageClickId = global.stage.connect('captured-event', (_stage, event) => {
+            if (!this.menu.isOpen || event.type() !== Clutter.EventType.BUTTON_PRESS)
+                return Clutter.EVENT_PROPAGATE;
+
+            const [x, y] = event.get_coords();
+            const target = global.stage.get_actor_at_pos(Clutter.PickMode.REACTIVE, x, y);
+            if (!this.contains(target) && !this.menu.actor.contains(target))
+                this.menu.close();
+
+            return Clutter.EVENT_PROPAGATE;
+        });
+
         this.connect('destroy', () => {
+            global.stage.disconnect(this._stageClickId);
             Main.messageTray.disconnectObject(this);
+            this._bannerSettings.disconnectObject(this);
+            this._bannerSettings.run_dispose();
+            this._bannerSettings = null;
             this.menu.disconnectObject(this);
 
             for (const source of this._sources)
@@ -229,6 +281,29 @@ class NotificationMenuButton extends PanelMenu.Button {
             child.destroy();
     }
 
+    _syncHeader(notificationCount) {
+        const doNotDisturb = !this._bannerSettings.get_boolean('show-banners');
+
+        if (doNotDisturb && notificationCount > 0)
+            this._headerMeta.text = `${notificationCount} unread while Do Not Disturb is on`;
+        else if (doNotDisturb)
+            this._headerMeta.text = 'Do Not Disturb is on';
+        else if (notificationCount > 0)
+            this._headerMeta.text = `${notificationCount} unread notifications`;
+        else
+            this._headerMeta.text = 'Inbox clear';
+
+        if (notificationCount > 0) {
+            this._headerBadge.text = `${notificationCount}`;
+            this._headerBadge.show();
+        } else if (doNotDisturb) {
+            this._headerBadge.text = 'DND';
+            this._headerBadge.show();
+        } else {
+            this._headerBadge.hide();
+        }
+    }
+
     _createNotificationRow(notification) {
         const row = new St.Button({
             x_expand: true,
@@ -247,7 +322,11 @@ class NotificationMenuButton extends PanelMenu.Button {
             icon_name: 'dialog-information-symbolic',
             style_class: 'system-status-icon',
         });
-        box.add_child(icon);
+        const iconBin = new St.Bin({
+            style_class: 'calendar-colors-notification-icon-bin',
+        });
+        iconBin.set_child(icon);
+        box.add_child(iconBin);
 
         const textBox = new St.BoxLayout({
             vertical: true,
@@ -267,6 +346,17 @@ class NotificationMenuButton extends PanelMenu.Button {
             x_expand: true,
             style_class: 'calendar-colors-notification-title',
         }));
+
+        const sourceLabel = this._notificationText(
+            notification.source?.title,
+            notification.source?.app?.get_name?.());
+        if (sourceLabel && sourceLabel !== title) {
+            textBox.add_child(new St.Label({
+                text: sourceLabel,
+                x_expand: true,
+                style_class: 'calendar-colors-notification-source',
+            }));
+        }
 
         const body = this._notificationText(
             notification.bannerBodyText,
@@ -299,6 +389,7 @@ class NotificationMenuButton extends PanelMenu.Button {
         this._clearRows();
 
         const notifications = this._collectNotifications();
+        this._syncHeader(notifications.length);
         if (notifications.length === 0) {
             this._listBox.add_child(new St.Label({
                 text: 'No notifications',
@@ -522,12 +613,14 @@ export default class CalendarColorsExtension extends Extension {
 
         this._suppressDateMenuMessageList();
         this._suppressDateMenuIndicator();
+        this._menu.box?.add_style_class_name(SPLIT_DATEMENU_POPOVER_STYLE_CLASS);
         this._dateMenu.add_style_class_name(SPLIT_DATE_BUTTON_STYLE_CLASS);
         (this._dateMenu.container ?? this._dateMenu)
             .add_style_class_name(SPLIT_DATE_CONTAINER_STYLE_CLASS);
     }
 
     _disableNotificationSplit() {
+        this._menu?.box?.remove_style_class_name(SPLIT_DATEMENU_POPOVER_STYLE_CLASS);
         this._dateMenu?.remove_style_class_name(SPLIT_DATE_BUTTON_STYLE_CLASS);
         (this._dateMenu?.container ?? this._dateMenu)
             ?.remove_style_class_name(SPLIT_DATE_CONTAINER_STYLE_CLASS);

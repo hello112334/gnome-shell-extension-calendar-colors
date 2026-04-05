@@ -47,19 +47,19 @@
     </key>
 
     <key name="weekend-color" type="s">
-      <default>'rgba(255,100,100,1)'</default>
+      <default>'rgba(178,134,115,1)'</default>
       <summary>Weekend highlight color</summary>
       <description>Color applied to Saturday and Sunday cells.</description>
     </key>
 
     <key name="holiday-color" type="s">
-      <default>'rgba(255,160,50,0.28)'</default>
+      <default>'rgba(196,174,145,0.32)'</default>
       <summary>Holiday highlight color</summary>
       <description>Background color applied to holiday cells.</description>
     </key>
 
     <key name="event-color" type="s">
-      <default>'rgba(90,155,255,1)'</default>
+      <default>'rgba(98,138,152,1)'</default>
       <summary>Event day highlight color</summary>
       <description>Color for the underline shown on days with scheduled events.</description>
     </key>

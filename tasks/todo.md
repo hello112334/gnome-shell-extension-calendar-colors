@@ -1,3 +1,40 @@
+# Visible UI Layout Refresh
+
+## Current Task
+
+- [x] Record the user report that the recent UI refresh did not materially change the calendar or notification layout.
+- [x] Inspect the current split-notifications implementation and confirm that the existing revision mostly changes minor notification-menu cosmetics while leaving the stock DateMenu layout intact.
+- [x] Add a split-specific DateMenu popover style hook so the calendar popup layout changes visibly when notifications are detached.
+- [x] Upgrade the detached notifications menu header and row presentation so it reads as a distinct notifications surface.
+- [x] Verify schema compilation and review the final diff; live visual confirmation is still required in GNOME Shell.
+
+## Plan
+
+- [x] Inspect the current extension and shell theme structure to find reversible DateMenu layout hooks.
+- [x] Add/remove split-specific layout classes in `extension.js` without changing the unsplit path.
+- [x] Implement stronger calendar-popup and detached-notification layout styling in `stylesheet.css`.
+- [x] Run local verification and record the result.
+
+## Spec
+
+When `separate-notifications-menu` is enabled:
+
+- The calendar popup must look intentionally different, not just slightly restyled after the message list is hidden.
+- The calendar/today/events stack should present as a tighter, more focused single-column surface.
+- The detached notifications popover should expose clearer state in its header and a more deliberate row layout.
+- Turning the setting off or disabling the extension must remove the custom split-mode layout classes cleanly.
+
+## Review
+
+- `extension.js` now adds a split-only `calendar-colors-split-datemenu-popover` class to the stock DateMenu popup and removes it cleanly when split mode is disabled.
+- The detached notifications button now exposes header state for unread count / Do Not Disturb and renders a stronger row layout with a dedicated icon well and source label.
+- `stylesheet.css` now gives the split DateMenu popup a visibly tighter card-style calendar/today/events layout instead of leaving the stock column almost unchanged.
+- `glib-compile-schemas schemas` succeeded.
+- `git diff --check` succeeded.
+- `scripts/reload-extension.sh` succeeded after rerunning outside the sandbox so it could write to the live dconf session.
+- `journalctl --user --since '3 minutes ago' | rg 'calendar-colors|failed to split notifications menu|TypeError|ReferenceError|JS ERROR|openbar@neuromorph'` returned no matches after the reload.
+- Manual visual confirmation of the refreshed calendar popup and detached notifications menu is still pending in the live shell.
+
 # Notification Ghost Lines
 
 ## Current Follow-up

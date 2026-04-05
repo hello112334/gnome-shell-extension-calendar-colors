@@ -12,8 +12,9 @@
 }
 
 .calendar-colors-notification-menu {
-    min-width: 24em;
-    min-height: 20em;
+    min-width: 28em;
+    min-height: 18em;
+    spacing: 0;
 }
 
 #panel .button-container.calendar-colors-split-date-container:ltr {
@@ -99,12 +100,159 @@
     padding: 0 !important;
 }
 
+.datemenu-popover.calendar-colors-split-datemenu-popover {
+    padding: 12px;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .datemenu-calendar-column {
+    spacing: 12px;
+    min-width: 0;
+    width: max-content;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .datemenu-calendar-column:ltr,
+.datemenu-popover.calendar-colors-split-datemenu-popover .datemenu-calendar-column:rtl {
+    margin: 0;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .datemenu-calendar-column .datemenu-displays-box {
+    spacing: 10px;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .datemenu-today-button,
+.datemenu-popover.calendar-colors-split-datemenu-popover .events-button,
+.datemenu-popover.calendar-colors-split-datemenu-popover .world-clocks-button {
+    padding: 14px 16px;
+    border-radius: 0;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar,
+.datemenu-popover.calendar-colors-split-datemenu-popover .datemenu-today-button,
+.datemenu-popover.calendar-colors-split-datemenu-popover .events-button {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .datemenu-today-button .day-label {
+    opacity: 0.58;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar {
+    margin: 0;
+    padding: 10px 12px 12px 12px;
+    border-radius: 0;
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-month-header {
+    padding-bottom: 6px;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-month-header .calendar-month-label {
+    width: auto;
+    padding: 8px 14px;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-month-header .pager-button {
+    height: 2.3em;
+    width: 2.3em;
+    border-radius: 999px;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-day-heading {
+    margin: 2px;
+    padding: 4px 0;
+    opacity: 0.6;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-day {
+    height: 2.75em;
+    width: 2.75em;
+    margin: 3px;
+    border-radius: 999px;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-day:hover {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-day:selected,
+.datemenu-popover.calendar-colors-split-datemenu-popover .calendar .calendar-day:active {
+    background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .events-button .events-box .events-title,
+.datemenu-popover.calendar-colors-split-datemenu-popover .world-clocks-button .world-clocks-header {
+    opacity: 0.54;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .events-button .events-box .events-list {
+    spacing: 8px;
+}
+
+.datemenu-popover.calendar-colors-split-datemenu-popover .events-button .events-box .events-list .event-box {
+    padding: 6px 8px;
+    border-radius: 10px;
+    background-color: transparent !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Notification indicator                                               */
+/* ------------------------------------------------------------------ */
+
 .calendar-colors-notification-indicator {
-    opacity: 0.75;
+    opacity: 0.62;
 }
 
 .calendar-colors-notification-indicator.calendar-colors-notification-pending {
     opacity: 1;
+}
+
+/* ------------------------------------------------------------------ */
+/* Notification popover — muji style                                   */
+/* ------------------------------------------------------------------ */
+
+.calendar-colors-notification-popover {
+    padding: 12px;
+}
+
+.calendar-colors-notification-header {
+    spacing: 12px;
+    padding: 4px 4px 14px 4px;
+    border-bottom: 1px solid rgba(127, 127, 127, 0.14);
+}
+
+.calendar-colors-notification-header-copy {
+    spacing: 2px;
+}
+
+.calendar-colors-notification-header-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    opacity: 0.36;
+}
+
+.calendar-colors-notification-header-meta {
+    opacity: 0.62;
+}
+
+.calendar-colors-notification-header-badge {
+    min-width: 2.2em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background-color: rgba(127, 127, 127, 0.14);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
 }
 
 .calendar-colors-notification-scroll {
@@ -113,36 +261,53 @@
 
 .calendar-colors-notification-list {
     spacing: 8px;
-    padding: 12px;
+    padding: 10px 4px 2px 4px;
 }
 
 .calendar-colors-notification-row {
-    padding: 10px 12px;
-    border-radius: 10px;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(127, 127, 127, 0.08);
+    background-color: rgba(127, 127, 127, 0.07);
 }
 
 .calendar-colors-notification-row:hover,
 .calendar-colors-notification-row:focus {
-    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(127, 127, 127, 0.14);
+    background-color: rgba(127, 127, 127, 0.12);
 }
 
 .calendar-colors-notification-row-box {
-    spacing: 10px;
+    spacing: 12px;
+    padding: 12px 14px;
+}
+
+.calendar-colors-notification-icon-bin {
+    width: 32px;
+    height: 32px;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: rgba(127, 127, 127, 0.08);
 }
 
 .calendar-colors-notification-text {
-    spacing: 2px;
+    spacing: 4px;
 }
 
 .calendar-colors-notification-title {
-    font-weight: 700;
+    font-weight: 600;
+}
+
+.calendar-colors-notification-source {
+    opacity: 0.5;
 }
 
 .calendar-colors-notification-body,
 .calendar-colors-notification-empty {
-    opacity: 0.8;
+    opacity: 0.52;
 }
 
 .calendar-colors-notification-empty {
-    padding: 16px 12px;
+    padding: 40px 16px;
+    text-align: center;
 }
